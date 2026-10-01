@@ -1,4 +1,3 @@
-Dưới đây là **toàn bộ trải nghiệm người chơi** của **Game số 2 – Tap & Boost Chain**, mô tả từ lúc mở app đến khi thoát, như thể bạn đang cầm điện thoại và chơi thật.
 
 ***
 
