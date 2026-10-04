@@ -4,7 +4,6 @@
     "types": ["node"],
     "noEmit": true,
     "esModuleInterop": true,
-    "downlevelIteration": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
