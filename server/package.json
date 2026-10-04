@@ -14,18 +14,18 @@
     "test": "node --import tsx --test test/*.test.ts",
     "db:migrate": "tsx src/db/migrate.ts"
   },
-  "dependencies": {
+"dependencies": {
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "pg": "^8.13.1",
     "pino": "^9.5.0",
     "pino-http": "^10.3.0",
     "zod": "^3.24.1",
-    "@types/node": "^22.10.2"
+    "@types/node": "^22.10.2",
+    "@types/express": "^4.17.21"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
-    "@types/express": "^4.17.21",
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
     "supertest": "^7.0.0",
