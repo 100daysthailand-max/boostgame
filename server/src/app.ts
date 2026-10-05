@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import cors from 'cors';
 import { pinoHttp } from 'pino-http';
 import { logger } from './logger.js';
 import { env } from './config/env.js';
@@ -10,7 +11,7 @@ import { gameRouter } from './routes/game.routes.js';
 import { upgradesRouter } from './routes/upgrades.routes.js';
 import { boostsRouter } from './routes/boosts.routes.js';
 import { minerRouter } from './routes/miner.routes.js';
-import { skinsRouter } from './routes/skins.routes.js';
+import { skinsRouter } from './routes/miner.routes.js';
 import { questsRouter } from './routes/quests.routes.js';
 import { dailyGateRouter } from './routes/daily-gate.routes.js';
 import { adsRouter } from './routes/ads.routes.js';
@@ -39,6 +40,15 @@ export function createApp(options: AppOptions = {}): Express {
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
+
+  // CORS configuration for Telegram Mini App
+  const corsOrigin = env.GAME_ORIGIN || 'https://boostgame-frontend.onrender.com';
+  app.use(cors({
+    origin: [corsOrigin, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 
   app.use(pinoHttp({ logger }));
   app.use(express.json({ limit: '1mb' }));
