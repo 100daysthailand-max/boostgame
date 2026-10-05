@@ -251,24 +251,26 @@ export function WalletScreen() {
 
         {/* Withdraw Form */}
         {eligibility?.eligible ? (
-          <div style={{display: 'flex', gap: '8px', marginBottom: '12px'}}>
-            <input
-              className="input"
-              type="number"
-              placeholder="BC amount"
-              value={withdrawAmount}
-              onChange={(e) => setWithdrawAmount(e.target.value)}
-              min={eligibility.min_ton * 1000}
-              max={wallet?.bc_available || 0}
-              disabled={withdrawing}
-            />
-            <button className="btn btn-primary" onClick={handleWithdraw} disabled={withdrawing || !withdrawAmount}>
-              {withdrawing ? 'Requesting...' : `Request → ~${withdrawAmount ? formatTON(parseInt(withdrawAmount) * 0.000001) : 0} TON`}
-            </button>
-          </div>
-          <p style={{fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center'}}>
-            Min: {formatTON(eligibility.min_ton)} TON • Fee: {formatTON(0.0001)} TON • Max {eligibility.max_per_day}/day
-          </p>
+          <>
+            <div style={{display: 'flex', gap: '8px', marginBottom: '12px'}}>
+              <input
+                className="input"
+                type="number"
+                placeholder="BC amount"
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                min={eligibility.min_ton * 1000}
+                max={wallet?.bc_available || 0}
+                disabled={withdrawing}
+              />
+              <button className="btn btn-primary" onClick={handleWithdraw} disabled={withdrawing || !withdrawAmount}>
+                {withdrawing ? 'Requesting...' : `Request → ~${withdrawAmount ? formatTON(parseInt(withdrawAmount) * 0.000001) : 0} TON`}
+              </button>
+            </div>
+            <p style={{fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center'}}>
+              Min: {formatTON(eligibility.min_ton)} TON • Fee: {formatTON(0.0001)} TON • Max {eligibility.max_per_day}/day
+            </p>
+          </>
         ) : (
           <p style={{fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', padding: '20px'}}>
             Complete requirements above to unlock withdrawals
