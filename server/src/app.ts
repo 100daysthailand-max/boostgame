@@ -11,7 +11,7 @@ import { gameRouter } from './routes/game.routes.js';
 import { upgradesRouter } from './routes/upgrades.routes.js';
 import { boostsRouter } from './routes/boosts.routes.js';
 import { minerRouter } from './routes/miner.routes.js';
-import { skinsRouter } from './routes/miner.routes.js';
+import { skinsRouter } from './routes/skins.routes.js';
 import { questsRouter } from './routes/quests.routes.js';
 import { dailyGateRouter } from './routes/daily-gate.routes.js';
 import { adsRouter } from './routes/ads.routes.js';
