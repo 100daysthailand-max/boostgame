@@ -20,49 +20,50 @@ export function MainLayout() {
   const [mounted, setMounted] = useState(false);
   const [showApp, setShowApp] = useState(false);
 
-  // Force show app after 3 seconds regardless of loading state
+  // Force show app after 2 seconds - independent of any state
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log('Forcing app show after timeout');
+      console.log('[MainLayout] Force show app after 2s timeout');
       setShowApp(true);
-      setLoading(false); // Force clear loading
-    }, 3000);
+      setLoading(false);
+    }, 2000);
     return () => clearTimeout(timer);
   }, [setLoading]);
 
+  // Mount and auth
   useEffect(() => {
+    console.log('[MainLayout] Mounting...');
     setMounted(true);
     WebApp.ready();
     WebApp.expand();
 
     const initData = WebApp.initData;
-    console.log('initData available:', !!initData);
-    console.log('stored token:', !!localStorage.getItem('auth_token'));
-    console.log('API base:', import.meta.env.VITE_API_URL);
+    console.log('[MainLayout] initData:', !!initData, initData?.substring(0, 50));
+    console.log('[MainLayout] stored token:', !!localStorage.getItem('auth_token'));
+    console.log('[MainLayout] API base:', import.meta.env.VITE_API_URL);
 
     const doAuth = async () => {
       try {
         if (initData && !api.getToken()) {
-          console.log('Authenticating with Telegram initData...');
+          console.log('[MainLayout] Authenticating with Telegram...');
           await api.authTelegram(initData);
           await initAuth();
-          console.log('Telegram auth success');
+          console.log('[MainLayout] Telegram auth success');
         } else {
           const storedToken = localStorage.getItem('auth_token');
           if (storedToken) {
-            console.log('Using stored token');
+            console.log('[MainLayout] Using stored token');
             api.setToken(storedToken);
             await initAuth();
-            console.log('Stored token auth success');
+            console.log('[MainLayout] Stored token auth success');
           } else {
-            console.log('No auth available - demo mode');
+            console.log('[MainLayout] No auth - demo mode');
             showToast('Open in Telegram for full access', 'info');
           }
         }
       } catch (err) {
-        console.error('Auth error:', err);
-        showToast('Auth failed, using demo mode', 'warning');
-        // Don't block - continue to app
+        console.error('[MainLayout] Auth error:', err);
+        showToast('Auth failed, demo mode', 'warning');
       } finally {
         setLoading(false);
       }
@@ -71,8 +72,8 @@ export function MainLayout() {
     doAuth();
   }, [initAuth, setLoading, showToast]);
 
-  // Show loading only for first 3 seconds
-  if (!mounted || (loading && !showApp)) {
+  // ALWAYS show app after mounted + 2s, regardless of loading state
+  if (!mounted) {
     return (
       <div className="app loading-screen">
         <div className="spinner"></div>
@@ -80,6 +81,9 @@ export function MainLayout() {
       </div>
     );
   }
+
+  // After mounted, show app immediately (timeout will handle loading)
+  console.log('[MainLayout] Render: mounted=', mounted, 'loading=', loading, 'showApp=', showApp);
 
   return (
     <div className="app">
