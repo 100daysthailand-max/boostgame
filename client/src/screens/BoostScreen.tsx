@@ -201,13 +201,3 @@ function formatBoostName(type: string): string {
   };
   return names[type] || type;
 }
-
-function getTimeRemaining(expiresAt: string): string {
-  const now = new Date().getTime();
-  const end = new Date(expiresAt).getTime();
-  const diff = end - now;
-  if (diff <= 0) return 'Expired';
-  const mins = Math.floor(diff / 60000);
-  const secs = Math.floor((diff % 60000) / 1000);
-  return `${mins}m ${secs}s`;
-}

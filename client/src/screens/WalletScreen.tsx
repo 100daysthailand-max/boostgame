@@ -8,6 +8,8 @@ export function WalletScreen() {
   const { wallet } = useAppStore();
   const { showToast } = useToast();
   
+  const formatTON = (ton: number) => ton.toFixed(6);
+  
   const [quote, setQuote] = useState<ConversionQuote | null>(null);
   const [eligibility, setEligibility] = useState<WithdrawalEligibility | null>(null);
   const [withdrawals, setWithdrawals] = useState<Array<any>>([]);
@@ -312,8 +314,4 @@ export function WalletScreen() {
       )}
     </div>
   );
-}
-
-function formatTON(ton: number): string {
-  return ton.toFixed(6);
 }

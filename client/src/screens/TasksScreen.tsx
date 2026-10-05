@@ -252,19 +252,3 @@ export function TasksScreen() {
     </div>
   );
 }
-
-function formatQuestType(type: string): string {
-  const names: Record<string, string> = {
-    TAP_COUNT: '👆 Tap Count',
-    COIN_EARNED: '💰 Coin Earned',
-    UPGRADE_PURCHASE: '⬆️ Upgrade Purchase',
-    REWARDED_AD: '📺 Watch Ad',
-    DAILY_GATE: '🎫 Daily Gate',
-    ACTIVE_TIME: '⏱️ Active Time',
-    MEMBERSHIP: '👥 Membership',
-    SHARE: '🔗 Share',
-    QUALIFIED_REFERRAL: '🤝 Referral',
-    COMBO_TARGET: '🔥 Combo Target',
-  };
-  return names[type] || type;
-}
