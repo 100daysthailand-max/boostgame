@@ -15,7 +15,7 @@ const pages = [
 
 export function MainLayout() {
   const location = useLocation();
-  const { initAuth, loading, isAuthenticated } = useAppStore();
+  const { initAuth, loading } = useAppStore();
   const { showToast } = useToast();
   const [mounted, setMounted] = useState(false);
 
