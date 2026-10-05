@@ -108,10 +108,8 @@ export function WalletScreen() {
     } finally {
       setSavingAddress(false);
     }
-  };
-
-  const formatTON = (ton: number) => ton.toFixed(6);
-
+};
+  
   return (
     <div className="page">
       <header className="page-header">
