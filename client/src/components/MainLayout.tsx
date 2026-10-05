@@ -15,7 +15,7 @@ const pages = [
 
 export function MainLayout() {
   const location = useLocation();
-  const { initAuth, loading } = useAppStore();
+  const { initAuth, loading, isAuthenticated } = useAppStore();
   const { showToast } = useToast();
   const [mounted, setMounted] = useState(false);
 
@@ -23,20 +23,52 @@ export function MainLayout() {
     setMounted(true);
     WebApp.ready();
     WebApp.expand();
-    
+
     const initData = WebApp.initData;
-    if (initData && !api.getToken()) {
-      api.authTelegram(initData).then(() => {
-        initAuth();
-      }).catch((_err) => {
-        showToast('Authentication failed', 'error');
-      });
-    } else {
-      initAuth();
-    }
+    
+    const doAuth = async () => {
+      if (initData && !api.getToken()) {
+        try {
+          await api.authTelegram(initData);
+          await initAuth();
+        } catch {
+          // Telegram auth failed - try stored token
+          const storedToken = localStorage.getItem('auth_token');
+          if (storedToken) {
+            api.setToken(storedToken);
+            await initAuth();
+          } else {
+            showToast('Open in Telegram for full access', 'info');
+          }
+        }
+      } else {
+        // No initData (direct browser) - try stored token
+        const storedToken = localStorage.getItem('auth_token');
+        if (storedToken) {
+          api.setToken(storedToken);
+          await initAuth();
+        } else {
+          showToast('Open in Telegram for full access', 'info');
+        }
+      }
+    };
+
+    doAuth().catch(() => {
+      // Ensure we don't get stuck on loading
+      showToast('Authentication error', 'error');
+    });
   }, [initAuth, showToast]);
 
-  if (!mounted || loading) {
+  // Don't block on loading forever - show app after 3s max
+  const [showApp, setShowApp] = useState(false);
+  useEffect(() => {
+    if (mounted) {
+      const timer = setTimeout(() => setShowApp(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [mounted]);
+
+  if (!mounted || (loading && !showApp)) {
     return (
       <div className="app loading-screen">
         <div className="spinner"></div>
