@@ -233,7 +233,7 @@ export function WalletScreen() {
                   {eligibility.option_details.referrals.met ? '✅' : '❌'} Referrals {eligibility.option_details.referrals.current}/{eligibility.option_details.referrals.required}
                 </div>
               </div>
-              <div className={`stat-card ${eligibility.option_details.account_age.met ? 'completed' : ''`}>
+              <div className={`stat-card ${eligibility.option_details.account_age.met ? 'completed' : ''}`}>
                 <div style={{color: eligibility.option_details.account_age.met ? 'var(--secondary)' : 'var(--text-muted)'}}>
                   {eligibility.option_details.account_age.met ? '✅' : '❌'} Age {eligibility.option_details.account_age.current}/{eligibility.option_details.account_age.required}d
                 </div>
@@ -249,7 +249,7 @@ export function WalletScreen() {
 
         {/* Withdraw Form */}
         {eligibility?.eligible ? (
-          <>
+          <div>
             <div style={{display: 'flex', gap: '8px', marginBottom: '12px'}}>
               <input
                 className="input"
@@ -268,7 +268,7 @@ export function WalletScreen() {
             <p style={{fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center'}}>
               Min: {formatTON(eligibility.min_ton)} TON • Fee: {formatTON(0.0001)} TON • Max {eligibility.max_per_day}/day
             </p>
-          </>
+          </div>
         ) : (
           <p style={{fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', padding: '20px'}}>
             Complete requirements above to unlock withdrawals

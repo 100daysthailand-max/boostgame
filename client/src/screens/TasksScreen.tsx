@@ -132,7 +132,7 @@ export function TasksScreen() {
               </div>
             </div>
             <div style={{textAlign: 'right'}}>
-              <div style={{fontSize: '12px', color: 'var(--accent)'}>
+              <div style={{fontSize: '12px', color: 'var(--accent)'}}>
                 {dailyGate?.new_day_switch.used_this_month || 0}/{dailyGate?.new_day_switch.per_month_limit || 30} New Day Switches
               </div>
             </div>
