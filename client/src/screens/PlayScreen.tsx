@@ -7,7 +7,8 @@ import type { TapResult } from '../types/api';
 
 export function PlayScreen() {
   const navigate = useNavigate();
-  const { gameState, setGameState, updateEnergy, updateCoin, wallet, loading, setLoading } = useAppStore();
+  const { gameState, setGameState, updateEnergy, updateCoin, wallet } = useAppStore();
+  const [tapping, setTapping] = useState(false);
   const { showToast } = useToast();
   const [tapResult, setTapResult] = useState<TapResult | null>(null);
   const [showCritical, setShowCritical] = useState(false);
@@ -36,7 +37,7 @@ export function PlayScreen() {
     }
 
     try {
-      setLoading(true);
+      setTapping(true);
       const result = await api.tap();
       setTapResult(result);
       updateEnergy(result.energy);
@@ -62,7 +63,7 @@ export function PlayScreen() {
         : 'Tap failed. Try again.';
       showToast(message, 'error');
     } finally {
-      setLoading(false);
+      setTapping(false);
     }
   };
 
@@ -133,7 +134,7 @@ export function PlayScreen() {
       <button
         className="core-button"
         onClick={handleTap}
-        disabled={loading || !gameState || (gameState.energy || 0) < 1}
+        disabled={tapping || !gameState || (gameState.energy || 0) < 1}
         aria-label="Tap Energy Core"
       >
         <span className="core-icon">⚡</span>

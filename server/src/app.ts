@@ -41,10 +41,19 @@ export function createApp(options: AppOptions = {}): Express {
   app.disable('x-powered-by');
   app.set('trust proxy', 1);
 
-  // CORS configuration for Telegram Mini App
-  const corsOrigin = env.GAME_ORIGIN || 'https://boostgame-frontend.onrender.com';
+  // CORS for the Telegram Mini App frontend.
+  // GAME_ORIGIN = URL of the FRONTEND (static site), e.g. https://boostgame-1.onrender.com
+  // Several origins can be given, comma separated.
+  const allowedOrigins = [
+    ...(env.GAME_ORIGIN ?? '')
+      .split(',')
+      .map((o) => o.trim().replace(/\/$/, ''))
+      .filter(Boolean),
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+  ];
   app.use(cors({
-    origin: [corsOrigin, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],

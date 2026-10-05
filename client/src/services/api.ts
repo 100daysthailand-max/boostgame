@@ -24,9 +24,11 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response?.status === 401) {
+        const url: string = error.config?.url ?? '';
+        if (error.response?.status === 401 && !url.includes('/auth/telegram')) {
           this.clearToken();
-          window.location.href = '/login';
+          // App.tsx lắng nghe sự kiện này để đăng nhập lại (không còn trang /login)
+          window.dispatchEvent(new Event('auth:expired'));
         }
         return Promise.reject(error);
       }
@@ -59,7 +61,16 @@ class ApiClient {
   }
 
   // Auth
-  async authTelegram(initData: string): Promise<{ token: string; expires_at: string; user: { telegram_id: string } }> {
+  /** Đánh thức backend (Render free ngủ -> request đầu có thể mất 30-60s). */
+  async warmUp(): Promise<void> {
+    try {
+      await axios.get(`${API_BASE}/health`, { timeout: 60000 });
+    } catch {
+      // bỏ qua: các request sau sẽ tự báo lỗi cụ thể
+    }
+  }
+
+  async authTelegram(initData: string): Promise<{ token: string; expiresAt: string; user: { telegramId: string } }> {
     const response = await this.client.post('/auth/telegram', { initData });
     this.setToken(response.data.token);
     return response.data;
