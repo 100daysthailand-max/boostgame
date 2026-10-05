@@ -3,6 +3,7 @@ import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
 import { api } from '../services/api';
 import { useToast } from './Toast';
+import WebApp from '@twa-dev/sdk';
 
 const pages = [
   { path: '/play', label: 'Play', icon: '⚡' },
@@ -27,7 +28,7 @@ export function MainLayout() {
     if (initData && !api.getToken()) {
       api.authTelegram(initData).then(() => {
         initAuth();
-      }).catch((err) => {
+      }).catch((_err) => {
         showToast('Authentication failed', 'error');
       });
     } else {
@@ -62,9 +63,6 @@ export function MainLayout() {
           ))}
         </nav>
       </div>
-      <ToastContainer />
     </div>
   );
 }
-
-import { WebApp } from '@twa-dev/sdk';

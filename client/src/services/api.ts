@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import type { MeView, GameState, TapResult, UpgradesResponse, BoostsResponse, MinerResponse, SkinsResponse, QuestsResponse, DailyGateStatus, DailyGateStartResponse, ConversionQuote, ConvertResponse, WithdrawalEligibility, WithdrawalRequest, ReferralInfo, RankWeekly, RankSeason, AdOfferResponse } from './types/api';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://boostgame-60y9.onrender.com/api';

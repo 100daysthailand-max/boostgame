@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
 import { api } from '../services/api';
 import { useToast } from '../components/Toast';
-import type { ConversionQuote, ConvertResponse, WithdrawalEligibility, WithdrawalRequest } from '../types/api';
+import type { ConversionQuote, WithdrawalEligibility } from '../types/api';
 
 export function WalletScreen() {
-  const navigate = useNavigate();
-  const { wallet, setWallet, gameState } = useAppStore();
+  const { wallet } = useAppStore();
   const { showToast } = useToast();
   
   const [quote, setQuote] = useState<ConversionQuote | null>(null);
@@ -235,7 +233,7 @@ export function WalletScreen() {
                   {eligibility.option_details.referrals.met ? '✅' : '❌'} Referrals {eligibility.option_details.referrals.current}/{eligibility.option_details.referrals.required}
                 </div>
               </div>
-              <div className={`stat-card ${eligibility.option_details.account_age.met ? 'completed' : ''}`}>
+              <div className={`stat-card ${eligibility.option_details.account_age.met ? 'completed' : ''`}>
                 <div style={{color: eligibility.option_details.account_age.met ? 'var(--secondary)' : 'var(--text-muted)'}}>
                   {eligibility.option_details.account_age.met ? '✅' : '❌'} Age {eligibility.option_details.account_age.current}/{eligibility.option_details.account_age.required}d
                 </div>

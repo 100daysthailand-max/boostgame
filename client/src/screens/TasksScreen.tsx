@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
 import { api } from '../services/api';
 import { useToast } from '../components/Toast';
-import type { QuestsResponse, QuestAssignment, DailyGateStatus, DailyGateStartResponse } from '../types/api';
+import type { QuestAssignment, DailyGateStatus } from '../types/api';
 
 export function TasksScreen() {
-  const navigate = useNavigate();
   const { wallet } = useAppStore();
   const { showToast } = useToast();
   const [quests, setQuests] = useState<QuestAssignment[]>([]);
@@ -92,6 +90,8 @@ export function TasksScreen() {
     return names[type] || type;
   };
 
+  const isCodeIssued = dailyGate?.normal_task?.status === 'CODE_ISSUED';
+
   return (
     <div className="page">
       <header className="page-header">
@@ -124,13 +124,15 @@ export function TasksScreen() {
         <div style={{marginBottom: '16px'}}>
           <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
             <div>
-              <div style={{fontWeight: '600'}}>Streak: {dailyGate?.streak.current || 0} days</div>
+              <div style={{fontWeight: '600'}}>
+                Streak: {dailyGate?.streak?.current || 0} days
+              </div>
               <div style={{fontSize: '12px', color: 'var(--text-muted)'}}>
-                Longest: {dailyGate?.streak.longest || 0} • Next reset: {dailyGate?.next_reset_utc ? new Date(dailyGate.next_reset_utc).toLocaleTimeString() : '—'}
+                Longest: {dailyGate?.streak?.longest || 0} • Next reset: {dailyGate?.next_reset_utc ? new Date(dailyGate.next_reset_utc).toLocaleTimeString() : '—'}
               </div>
             </div>
             <div style={{textAlign: 'right'}}>
-              <div style={{fontSize: '12px', color: 'var(--accent)'}}>
+              <div style={{fontSize: '12px', color: 'var(--accent)'}>
                 {dailyGate?.new_day_switch.used_this_month || 0}/{dailyGate?.new_day_switch.per_month_limit || 30} New Day Switches
               </div>
             </div>
@@ -139,7 +141,7 @@ export function TasksScreen() {
           {/* Milestones */}
           <div style={{display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '16px'}}>
             {dailyGate?.milestones.map(day => {
-              const completed = dailyGate?.streak.current >= day;
+              const completed = (dailyGate?.streak?.current || 0) >= day;
               return (
                 <div key={day} className={`dg-milestone ${completed ? 'completed' : ''}`}>
                   <div className="dg-day">{day}</div>
@@ -160,10 +162,10 @@ export function TasksScreen() {
             </div>
           ) : dailyGate?.normal_task ? (
             <div style={{display: 'flex', flexDirection: 'column', gap: '10px'}}>
-              <button className="btn btn-primary btn-block" onClick={handleStartDailyGate} disabled={!!dailyGate.normal_task?.status === 'CODE_ISSUED'}>
-                {dailyGate.normal_task?.status === 'CODE_ISSUED' ? '⏳ Task in Progress' : '🎫 Start Daily Gate'}
+              <button className="btn btn-primary btn-block" onClick={handleStartDailyGate} disabled={isCodeIssued}>
+                {isCodeIssued ? '⏳ Task in Progress' : '🎫 Start Daily Gate'}
               </button>
-              {dailyGate.normal_task?.status === 'CODE_ISSUED' && (
+              {isCodeIssued && (
                 <div style={{display: 'flex', gap: '8px'}}>
                   <input
                     className="input"
@@ -185,7 +187,7 @@ export function TasksScreen() {
           )}
 
           {/* New Day Switch */}
-          {!dailyGate?.new_day_switch.used_today && dailyGate?.streak.current > 0 && (
+          {!dailyGate?.new_day_switch.used_today && (dailyGate?.streak?.current || 0) > 0 && (
             <button className="btn btn-warning btn-block" onClick={handleNewDaySwitch} style={{marginTop: '12px'}}>
               🔄 New Day Switch ({dailyGate?.new_day_switch.used_this_month || 0}/{dailyGate?.new_day_switch.per_month_limit || 30} this month)
             </button>

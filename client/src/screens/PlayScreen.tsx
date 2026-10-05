@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../stores/appStore';
 import { api } from '../services/api';
 import { useToast } from '../components/Toast';
-import type { GameState, TapResult } from '../types/api';
+import type { TapResult } from '../types/api';
 
 export function PlayScreen() {
   const navigate = useNavigate();
-  const { gameState, setGameState, updateEnergy, updateCoin, wallet, setWallet, loading, setLoading } = useAppStore();
+  const { gameState, setGameState, updateEnergy, updateCoin, wallet, loading, setLoading } = useAppStore();
   const { showToast } = useToast();
   const [tapResult, setTapResult] = useState<TapResult | null>(null);
   const [showCritical, setShowCritical] = useState(false);
@@ -51,7 +51,6 @@ export function PlayScreen() {
         setTimeout(() => setShowCombo(false), 1500);
       }
       
-      // Trigger haptic feedback
       if (window.navigator.vibrate) {
         window.navigator.vibrate(result.critical ? [50, 30, 50] : 30);
       }
@@ -70,6 +69,8 @@ export function PlayScreen() {
   const handleEnergyRefill = () => {
     navigate('/boost');
   };
+
+  const comboMultiplier = gameState?.combo_multipliers?.[gameState.combo_count > 0 ? Math.min(Math.floor(gameState.combo_count / 5), 2) : 0] || 1;
 
   return (
     <div className="page">
@@ -141,7 +142,7 @@ export function PlayScreen() {
           <span className="core-text">Boost: x{gameState.boost_multiplier}</span>
         )}
         {gameState && gameState.combo_count > 0 && (
-          <span className="core-combo">Combo x{gameState.combo_count} (x{gameState.combo_multiplier || 1})</span>
+          <span className="core-combo">Combo x{gameState.combo_count} (x{comboMultiplier})</span>
         )}
       </button>
 
@@ -249,5 +250,3 @@ export function PlayScreen() {
     </div>
   );
 }
-
-import { WebApp } from '@twa-dev/sdk';

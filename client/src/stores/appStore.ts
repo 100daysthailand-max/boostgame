@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { MeView, GameState, Wallet, PlayerState } from '../types/api';
+import type { MeView, GameState, Wallet } from '../types/api';
 import { api } from '../services/api';
 
 interface AppState {
@@ -36,7 +36,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       isAuthenticated: false,
       user: null,
       gameState: null,

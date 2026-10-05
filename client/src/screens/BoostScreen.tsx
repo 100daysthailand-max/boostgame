@@ -7,7 +7,7 @@ import type { BoostsResponse, BoostConfig, ActiveBoost } from '../types/api';
 
 export function BoostScreen() {
   const navigate = useNavigate();
-  const { gameState, wallet, fetchGameState } = useAppStore();
+  const { wallet } = useAppStore();
   const { showToast } = useToast();
   const [boosts, setBoosts] = useState<BoostsResponse | null>(null);
   const [activating, setActivating] = useState<string | null>(null);
@@ -25,14 +25,13 @@ export function BoostScreen() {
     fetchBoosts();
   }, []);
 
-  const handleActivate = async (type: string, config: BoostConfig) => {
+  const handleActivate = async (type: string) => {
     if (activating) return;
     setActivating(type);
     try {
       await api.activateBoost(type, 'gem');
       showToast(`${type} activated!`, 'success');
       fetchBoosts();
-      fetchGameState?.();
     } catch (error: any) {
       showToast(error.response?.data?.error || 'Activation failed', 'error');
     } finally {
@@ -126,10 +125,7 @@ export function BoostScreen() {
             const active = boosts?.active.find(b => b.type === config.type);
             const isActive = !!active;
             return (
-              <div key={config.type} className="ad-slot-btn" 
-                onClick={() => !isActive && handleActivate(config.type, config)}
-                disabled={isActive || activating === config.type}
-              >
+              <div key={config.type} className="ad-slot-btn">
                 <div className="ad-slot-info">
                   <div className="ad-slot-name" style={{display: 'flex', alignItems: 'center', gap: '8px'}}>
                     <span style={{fontSize: '24px'}}>{getBoostIcon(config.type)}</span>
@@ -144,9 +140,13 @@ export function BoostScreen() {
                   {isActive ? (
                     <span style={{color: 'var(--secondary)', fontWeight: '600'}}>ACTIVE</span>
                   ) : (
-                    <span className={`btn btn-primary ${activating === config.type ? 'btn-sm' : ''}`}>
+                    <button 
+                      className={`btn btn-primary ${activating === config.type ? 'btn-sm' : ''}`}
+                      onClick={() => !isActive && handleActivate(config.type)}
+                      disabled={isActive || activating === config.type}
+                    >
                       {activating === config.type ? 'Activating...' : 'Activate'}
-                    </span>
+                    </button>
                   )}
                 </div>
               </div>
@@ -164,9 +164,9 @@ export function BoostScreen() {
           Miner keys unlock offline earnings. Standard: 2h/3h. Custom: 30min-10h.
         </p>
         <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-          {[2, 3].map(hours => (
-            <button key={hours} className="btn btn-primary" onClick={() => handlePurchaseKey(hours)}>
-              {hours}h Key
+          {[2, 3].map(h => (
+            <button key={h} className="btn btn-primary" onClick={() => navigate('/miner')}>
+              {h}h Key
             </button>
           ))}
           <button className="btn btn-secondary" onClick={() => navigate('/miner')}>
@@ -210,8 +210,4 @@ function getTimeRemaining(expiresAt: string): string {
   const mins = Math.floor(diff / 60000);
   const secs = Math.floor((diff % 60000) / 1000);
   return `${mins}m ${secs}s`;
-}
-
-function handlePurchaseKey(hours: number) {
-  // Navigate to miner screen or show modal
 }

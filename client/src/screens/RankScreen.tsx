@@ -34,7 +34,7 @@ export function RankScreen() {
         <div key={board.board} className="rank-board">
           <div className="rank-board-title">{board.board} Leaderboard</div>
           <div className="rank-list">
-            {board.top.slice(0, 10).map((entry: any, idx: number) => (
+            {board.top.slice(0, 10).map((entry: any) => (
               <div key={entry.rank} className="rank-item">
                 <div className={`rank-pos ${entry.rank <= 3 ? `top${entry.rank}` : 'other'}`}>
                   {entry.rank <= 3 ? ['🥇', '🥈', '🥉'][entry.rank - 1] : entry.rank}
