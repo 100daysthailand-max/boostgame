@@ -15,9 +15,20 @@ const pages = [
 
 export function MainLayout() {
   const location = useLocation();
-  const { initAuth, loading } = useAppStore();
+  const { initAuth, loading, setLoading } = useAppStore();
   const { showToast } = useToast();
   const [mounted, setMounted] = useState(false);
+  const [showApp, setShowApp] = useState(false);
+
+  // Force show app after 3 seconds regardless of loading state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log('Forcing app show after timeout');
+      setShowApp(true);
+      setLoading(false); // Force clear loading
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [setLoading]);
 
   useEffect(() => {
     setMounted(true);
@@ -25,49 +36,42 @@ export function MainLayout() {
     WebApp.expand();
 
     const initData = WebApp.initData;
-    
+    console.log('initData available:', !!initData);
+    console.log('stored token:', !!localStorage.getItem('auth_token'));
+    console.log('API base:', import.meta.env.VITE_API_URL);
+
     const doAuth = async () => {
-      if (initData && !api.getToken()) {
-        try {
+      try {
+        if (initData && !api.getToken()) {
+          console.log('Authenticating with Telegram initData...');
           await api.authTelegram(initData);
           await initAuth();
-        } catch {
-          // Telegram auth failed - try stored token
+          console.log('Telegram auth success');
+        } else {
           const storedToken = localStorage.getItem('auth_token');
           if (storedToken) {
+            console.log('Using stored token');
             api.setToken(storedToken);
             await initAuth();
+            console.log('Stored token auth success');
           } else {
+            console.log('No auth available - demo mode');
             showToast('Open in Telegram for full access', 'info');
           }
         }
-      } else {
-        // No initData (direct browser) - try stored token
-        const storedToken = localStorage.getItem('auth_token');
-        if (storedToken) {
-          api.setToken(storedToken);
-          await initAuth();
-        } else {
-          showToast('Open in Telegram for full access', 'info');
-        }
+      } catch (err) {
+        console.error('Auth error:', err);
+        showToast('Auth failed, using demo mode', 'warning');
+        // Don't block - continue to app
+      } finally {
+        setLoading(false);
       }
     };
 
-    doAuth().catch(() => {
-      // Ensure we don't get stuck on loading
-      showToast('Authentication error', 'error');
-    });
-  }, [initAuth, showToast]);
+    doAuth();
+  }, [initAuth, setLoading, showToast]);
 
-  // Don't block on loading forever - show app after 3s max
-  const [showApp, setShowApp] = useState(false);
-  useEffect(() => {
-    if (mounted) {
-      const timer = setTimeout(() => setShowApp(true), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [mounted]);
-
+  // Show loading only for first 3 seconds
   if (!mounted || (loading && !showApp)) {
     return (
       <div className="app loading-screen">
