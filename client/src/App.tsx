@@ -7,6 +7,7 @@ import { TasksScreen } from './screens/TasksScreen';
 import { RankScreen } from './screens/RankScreen';
 import { WalletScreen } from './screens/WalletScreen';
 import { useAppStore } from './stores/appStore';
+import { telegramDebugInfo } from './services/telegram';
 
 function errorMessage(code: string | null): string {
   switch (code) {
@@ -52,6 +53,9 @@ export default function App() {
     return (
       <div className="app loading-screen">
         <p>{errorMessage(authError)}</p>
+        <p style={{ marginTop: 8, fontSize: 11, opacity: 0.6, wordBreak: 'break-all', padding: '0 16px' }}>
+          {telegramDebugInfo()}
+        </p>
         <button
           style={{ marginTop: 16, padding: '10px 20px', borderRadius: 8, border: 'none' }}
           onClick={() => void bootstrap()}
