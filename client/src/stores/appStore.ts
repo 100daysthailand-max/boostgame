@@ -45,6 +45,24 @@ function describeError(err: unknown): string {
   return 'unknown';
 }
 
+function waitForInitData(timeoutMs = 3000): Promise<string | undefined> {
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const check = () => {
+      if (WebApp.initData) {
+        resolve(WebApp.initData);
+        return;
+      }
+      if (Date.now() - start > timeoutMs) {
+        resolve(undefined);
+        return;
+      }
+      setTimeout(check, 50);
+    };
+    check();
+  });
+}
+
 export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
@@ -88,7 +106,9 @@ export const useAppStore = create<AppState>()(
             // Render free ngủ khi không có truy cập -> đánh thức trước (tối đa 60s)
             await api.warmUp();
 
-            const initData = WebApp.initData;
+            // Wait for Telegram WebApp to parse initData from URL
+            const initData = await waitForInitData(3000);
+            console.log('[bootstrap] initData available:', !!initData, initData?.substring(0, 50));
             let me: MeView | null = null;
 
             if (api.getToken()) {
@@ -102,6 +122,7 @@ export const useAppStore = create<AppState>()(
 
             if (!me) {
               if (!initData) {
+                console.log('[bootstrap] No initData after waiting');
                 set({ isAuthenticated: false, authError: 'not_in_telegram' });
                 return;
               }
